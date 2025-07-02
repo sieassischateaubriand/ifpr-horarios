@@ -59,7 +59,9 @@ const config: Config = {
   url: 'https://sieassischateaubriand.github.io/',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/ifpr-horarios/',
+  
+  // baseUrl: '/ifpr-horarios/',
+  baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -191,23 +193,23 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/vonmecheln/ifpr-horarios',
+              href: 'https://github.com/sieassischateaubriand/ifpr-horarios/',
             },
           ],
         },
-        {
-          title: 'Contato',
-          items: [
-            {
-              label: 'vonmecheln',
-              href: 'https://github.com/vonmecheln',
-            },
-            {
-              label: 'ricardorhv',
-              href: 'https://github.com/ricardorhv',
-            },
-          ],
-        },
+        // {
+        //   title: 'Contato',
+        //   items: [
+        //     {
+        //       label: 'vonmecheln',
+        //       href: 'https://github.com/vonmecheln',
+        //     },
+        //     {
+        //       label: 'ricardorhv',
+        //       href: 'https://github.com/ricardorhv',
+        //     },
+        //   ],
+        // },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Von Mechlen e Ricardo Vinciguerra. Desenvolvido com Docusaurus.`,
     },
