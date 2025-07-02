@@ -10,7 +10,6 @@ import {
   ScreenshotButton,
   SettingsContainer,
 } from './styles'
-import { Gear, X, Check, Camera } from 'phosphor-react'
 import { RadioItem } from '../RadioItem'
 import { GridContext } from '../Grid'
 import { TimetableViewType } from '@site/src/reducers/settings/reducer'
@@ -34,7 +33,7 @@ export function ModalSettings({ downloadScreenshot }: ModalSettingsProps) {
   return (
     <Dialog.Root>
       <DialogTrigger>
-        <Gear size={'2rem'} />
+        <span style={{ fontSize: '2rem' }}>⚙️</span>
       </DialogTrigger>
       <Dialog.Portal>
         <DialogContent>
@@ -47,7 +46,7 @@ export function ModalSettings({ downloadScreenshot }: ModalSettingsProps) {
             </div>
 
             <DialogClose type="button">
-              <X size={'1.5rem'} />
+              <span style={{ fontSize: '1.5rem' }}>✕</span>
             </DialogClose>
           </header>
 
@@ -61,7 +60,7 @@ export function ModalSettings({ downloadScreenshot }: ModalSettingsProps) {
                 onCheckedChange={handleChangeMenu}
               >
                 <Checkbox.Indicator>
-                  <Check size={'1rem'} />
+                  <span style={{ fontSize: '1rem' }}>✓</span>
                 </Checkbox.Indicator>
               </Checkbox.Root>
               <label htmlFor="menuFixed">Menu fixo</label>
@@ -109,7 +108,7 @@ export function ModalSettings({ downloadScreenshot }: ModalSettingsProps) {
               onClick={downloadScreenshot}
               title="Download do horário como imagem"
             >
-              <Camera size={25} />
+              <span style={{ fontSize: '25px' }}>📷</span>
             </ScreenshotButton>
           </footer>
         </DialogContent>
