@@ -8,7 +8,7 @@ const isDev = false
 const isDeployPreview = false
 const isBranchDeploy = false
 
-const prefixCurrentVersions = ['2025']
+const prefixCurrentVersions = ['2025','2024','2023']
 
 function isCurrentVersions(value) {
   // return true
@@ -35,6 +35,7 @@ function makeVersionNames() {
     names[item] = {
       label: name,
     }
+    console.log(name);
   })
 
   // @ts-ignore
