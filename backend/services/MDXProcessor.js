@@ -27,19 +27,26 @@ class MDXProcessor {
         try {
             const content = fs.readFileSync(filePath, 'utf8');
 
-           // console.log("Content: "+content);
-            
+            // console.log("Content: "+content);
+
             // Procurar pela exportação const data com regex mais robusta
             //const dataMatch = content.match(/export const data = ({[\s\S]*?^});/m);
             //const dataMatch = content.match(/export const data = (\{[\s\S]*?\});/);
             //const dataMatch = content.match(/export const data = (\{[\s\S]*?\})\s*;?/);
-            
-            const searchString = 'export const data =';
-            const startIndex = content.indexOf(searchString);
+
+            let searchString = 'export const data =';
+            let startIndex = content.indexOf(searchString);
 
             if (startIndex === -1) {
-                console.error(`[ERRO] Bloco '${searchString}' não encontrado no arquivo: ${filePath}`);
-                return null;
+                let searchStringComp = searchString;
+                searchString = 'const data =';
+                startIndex = content.indexOf(searchString);
+
+                if (startIndex === -1) {
+                    searchStringComp = searchStringComp + " e " + searchString;
+                    console.error(`[ERRO] Bloco '${searchStringComp}' não encontrado no arquivo: ${filePath}`);
+                    return null;
+                }
             }
 
             // 2. Encontrar o primeiro '{' depois de 'export const data ='
@@ -48,9 +55,9 @@ class MDXProcessor {
                 console.error(`[ERRO] Objeto de dados (iniciado com '{') não encontrado após '${searchString}' em: ${filePath}`);
                 return null;
             }
-            
 
-              // 3. Contar as chaves para encontrar o final do objeto
+
+            // 3. Contar as chaves para encontrar o final do objeto
             let braceCount = 1;
             let objectEndIndex = -1;
 
