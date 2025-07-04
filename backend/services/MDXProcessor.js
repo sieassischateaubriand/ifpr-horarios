@@ -26,9 +26,11 @@ class MDXProcessor {
             const content = fs.readFileSync(filePath, 'utf8');
 
             // Procurar pela exportação const data com regex mais robusta
-            const dataMatch = content.match(/export const data = ({[\s\S]*?^});/m);
-            if (!dataMatch) {
-                console.log(`Não encontrou 'export const data' em ${filePath}`);
+            //const dataMatch = content.match(/export const data = ({[\s\S]*?^});/m);
+            const dataMatch = content.match(/export const data = (\{[\s\S]*?\});/);
+
+            if (!dataMatch || !dataMatch[1]) {
+                console.error(`[ERRO] Não encontrou o bloco 'export const data = {...};' no arquivo: ${filePath}`);
                 return null;
             }
 
@@ -37,15 +39,20 @@ class MDXProcessor {
             // Usar eval de forma segura para parsear o objeto JavaScript
             try {
                 // Criar um contexto seguro para eval
-                const data = eval(`(${dataStr})`);
+                // const data = eval(`(${dataStr})`);
+                const data = new Function(`return ${dataStr}`)();
                 return data;
-            } catch (evalError) {
-                console.log(`Erro ao avaliar objeto JS de ${filePath}:`, evalError.message);
+                // } catch (evalError) {
+            } catch (parseError) {
+
+                console.error(`[ERRO] Falha ao analisar o objeto de dados em ${filePath}. Verifique se há erros de sintaxe (ex: vírgula sobrando).`, parseError.message);
                 return null;
             }
 
-        } catch (error) {
-            console.error(`Erro ao processar arquivo ${filePath}:`, error.message);
+        } catch (readError) {
+            console.error(`[ERRO] Falha ao ler o arquivo ${filePath}:`, readError.message);
+            // } catch (error) {
+            //     console.error(`Erro ao processar arquivo ${filePath}:`, error.message);
             return null;
         }
     }
@@ -149,11 +156,13 @@ class MDXProcessor {
 
             // Usamos path.join para subir um nível ('..') de forma segura
             // Isso resulta em /home/ubuntu/ifpr-horarios
-            const basePath = path.join(currentDir, '..');
+            const basePath = path.join(currentDir, '../..');
+
+            console.log(currentDir);
+            console.log(basePath);
 
             // Caminho para a pasta da versão
             // const basePath = "/home/ubuntu/ifpr-horarios";
-
 
             const versionPath = path.join(basePath, "versioned_docs", `version-${versao}`);
             const professorPath = path.join(versionPath, "professor");
@@ -202,6 +211,10 @@ class MDXProcessor {
             this.processingStatus.processed_files = mdxFiles.length;
             this.processingStatus.end_time = new Date().toISOString();
             this.processingStatus.is_processing = false;
+
+            // Dentro de processVersionFolder, antes de construir o versionPath
+            console.log(`[DEBUG] Raiz do projeto calculada: ${basePath}`);
+            console.log(`[DEBUG] Tentando acessar a pasta de versão: ${versionPath}`);
 
             return true;
 
