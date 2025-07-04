@@ -1,3 +1,11 @@
+#Publication
+
+Render:
+https://ifpr-horarios.onrender.com
+Netlify:
+https://horario-ifpr-assis-chateaubriand.netlify.app/
+
+
 # Website
 
 This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
