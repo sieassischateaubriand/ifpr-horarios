@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,7 +58,8 @@
             font-weight: 600;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
             padding: 15px;
             border: 2px solid #e1e5e9;
@@ -66,7 +68,8 @@
             transition: border-color 0.3s ease;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -176,7 +179,7 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(255, 255, 255, .3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
@@ -184,10 +187,13 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -199,14 +205,38 @@
             <div class="form-group">
                 <label for="versao">Versão dos Horários:</label>
                 <select id="versao" name="versao" required>
-                    <option value="2025.1.8">2025.1.8 (Atual)</option>
-                    <option value="2025.1.7">2025.1.7</option>
-                    <option value="2025.1.6">2025.1.6</option>
-                    <option value="2025.1.5">2025.1.5</option>
-                    <option value="2025.1.4">2025.1.4</option>
-                    <option value="2025.1.3">2025.1.3</option>
-                    <option value="2025.1.2">2025.1.2</option>
-                    <option value="2025.1.1">2025.1.1</option>
+                    <optgroup label="2025">
+                        <option value="2025.1.8">2025.1.8 (Atual)</option>
+                        <option value="2025.1.7">2025.1.7</option>
+                        <option value="2025.1.6">2025.1.6</option>
+                        <option value="2025.1.5">2025.1.5</option>
+                        <option value="2025.1.4">2025.1.4</option>
+                        <option value="2025.1.3">2025.1.3</option>
+                        <option value="2025.1.2">2025.1.2</option>
+                        <option value="2025.1.1">2025.1.1</option>
+                    </optgroup>
+                    <optgroup label="2024">
+                        <!-- Versões do 2º Semestre de 2024 -->
+                        <option value="2024.2.7">2024.2.7</option>
+                        <option value="2024.2.6">2024.2.6</option>
+                        <option value="2024.2.5">2024.2.5</option>
+                        <option value="2024.2.4">2024.2.4</option>
+                        <option value="2024.2.3">2024.2.3</option>
+                        <option value="2024.2.2">2024.2.2</option>
+                        <option value="2024.2.1">2024.2.1</option>
+                        <!-- Versões do 1º Semestre de 2024 -->
+                        <option value="2024.1.11">2024.1.11</option>
+                        <option value="2024.1.10">2024.1.10</option>
+                        <option value="2024.1.9">2024.1.9</option>
+                        <option value="2024.1.8">2024.1.8</option>
+                        <option value="2024.1.7">2024.1.7</option>
+                        <option value="2024.1.6">2024.1.6</option>
+                        <option value="2024.1.5">2024.1.5</option>
+                        <option value="2024.1.4">2024.1.4</option>
+                        <option value="2024.1.3">2024.1.3</option>
+                        <option value="2024.1.2">2024.1.2</option>
+                        <option value="2024.1.1">2024.1.1</option>
+                    </optgroup>
                 </select>
             </div>
 
@@ -254,24 +284,24 @@
         let statusInterval;
         let startTime;
 
-        document.getElementById('processForm').addEventListener('submit', async function(e) {
+        document.getElementById('processForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             const versao = document.getElementById('versao').value;
             const processBtn = document.getElementById('processBtn');
             const progressContainer = document.getElementById('progressContainer');
             const successMessage = document.getElementById('successMessage');
             const errorsContainer = document.getElementById('errorsContainer');
-            
+
             // Reset UI
             progressContainer.style.display = 'block';
             successMessage.style.display = 'none';
             errorsContainer.style.display = 'none';
             processBtn.disabled = true;
             processBtn.innerHTML = '<span class="spinner"></span>Processando...';
-            
+
             startTime = new Date();
-            
+
             try {
                 const response = await fetch('/api/processar-mdx', {
                     method: 'POST',
@@ -280,86 +310,86 @@
                     },
                     body: JSON.stringify({ versao: versao })
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (response.ok) {
                     // Iniciar monitoramento do status
                     statusInterval = setInterval(checkStatus, 1000);
                 } else {
                     throw new Error(result.error || 'Erro desconhecido');
                 }
-                
+
             } catch (error) {
                 alert('Erro ao iniciar processamento: ' + error.message);
                 resetUI();
             }
         });
-        
+
         async function checkStatus() {
             try {
                 const response = await fetch('/api/status-processamento');
                 const status = await response.json();
-                
+
                 updateUI(status);
-                
+
                 if (!status.is_processing) {
                     clearInterval(statusInterval);
                     resetUI();
-                    
+
                     if (status.errors && status.errors.length > 0) {
                         showErrors(status.errors);
                     } else {
                         document.getElementById('successMessage').style.display = 'block';
                     }
                 }
-                
+
             } catch (error) {
                 console.error('Erro ao verificar status:', error);
             }
         }
-        
+
         function updateUI(status) {
             const progressFill = document.getElementById('progressFill');
             const statusText = document.getElementById('statusText');
             const currentFile = document.getElementById('currentFile');
             const progressText = document.getElementById('progressText');
             const elapsedTime = document.getElementById('elapsedTime');
-            
+
             // Atualizar barra de progresso
-            const percentage = status.total_files > 0 ? 
+            const percentage = status.total_files > 0 ?
                 (status.processed_files / status.total_files) * 100 : 0;
             progressFill.style.width = percentage + '%';
-            
+
             // Atualizar textos
             statusText.textContent = status.is_processing ? 'Processando...' : 'Concluído';
             currentFile.textContent = status.current_file || '-';
             progressText.textContent = `${status.processed_files} / ${status.total_files}`;
-            
+
             // Calcular tempo decorrido
             if (startTime) {
                 const elapsed = Math.floor((new Date() - startTime) / 1000);
                 const minutes = Math.floor(elapsed / 60);
                 const seconds = elapsed % 60;
-                elapsedTime.textContent = 
+                elapsedTime.textContent =
                     `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }
         }
-        
+
         function showErrors(errors) {
             const errorsContainer = document.getElementById('errorsContainer');
             const errorsList = document.getElementById('errorsList');
-            
+
             errorsList.innerHTML = '';
             errors.forEach(error => {
                 const li = document.createElement('li');
                 li.textContent = error;
                 errorsList.appendChild(li);
             });
-            
+
             errorsContainer.style.display = 'block';
         }
-        
+
         function resetUI() {
             const processBtn = document.getElementById('processBtn');
             processBtn.disabled = false;
@@ -367,5 +397,5 @@
         }
     </script>
 </body>
-</html>
 
+</html>

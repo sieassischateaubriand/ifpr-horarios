@@ -1,5 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
+const JSON5 = require('json5'); // Importe a biblioteca no topo do seu arquivo
+
 
 const ProfessorModel = require('../models/Professor');
 
@@ -25,18 +27,63 @@ class MDXProcessor {
         try {
             const content = fs.readFileSync(filePath, 'utf8');
 
-            console.log("Content: "+content);
+           // console.log("Content: "+content);
             
             // Procurar pela exportação const data com regex mais robusta
             //const dataMatch = content.match(/export const data = ({[\s\S]*?^});/m);
-            const dataMatch = content.match(/export const data = (\{[\s\S]*?\});/);
+            //const dataMatch = content.match(/export const data = (\{[\s\S]*?\});/);
+            //const dataMatch = content.match(/export const data = (\{[\s\S]*?\})\s*;?/);
+            
+            const searchString = 'export const data =';
+            const startIndex = content.indexOf(searchString);
 
-            if (!dataMatch || !dataMatch[1]) {
-                console.error(`[ERRO] Não encontrou o bloco 'export const data = {...};' no arquivo: ${filePath}`);
+            if (startIndex === -1) {
+                console.error(`[ERRO] Bloco '${searchString}' não encontrado no arquivo: ${filePath}`);
                 return null;
             }
 
-            let dataStr = dataMatch[1];
+            // 2. Encontrar o primeiro '{' depois de 'export const data ='
+            const objectStartIndex = content.indexOf('{', startIndex);
+            if (objectStartIndex === -1) {
+                console.error(`[ERRO] Objeto de dados (iniciado com '{') não encontrado após '${searchString}' em: ${filePath}`);
+                return null;
+            }
+            
+
+              // 3. Contar as chaves para encontrar o final do objeto
+            let braceCount = 1;
+            let objectEndIndex = -1;
+
+            for (let i = objectStartIndex + 1; i < content.length; i++) {
+                const char = content[i];
+                if (char === '{') {
+                    braceCount++;
+                } else if (char === '}') {
+                    braceCount--;
+                }
+
+                if (braceCount === 0) {
+                    // Encontramos o fecha-chaves correspondente!
+                    objectEndIndex = i;
+                    break;
+                }
+            }
+
+            if (objectEndIndex === -1) {
+                console.error(`[ERRO] Objeto de dados não foi fechado corretamente (chaves '{}' desbalanceadas) em: ${filePath}`);
+                return null;
+            }
+
+            // 4. Extrair a string do objeto completo
+            const dataStr = content.substring(objectStartIndex, objectEndIndex + 1);
+
+
+            // if (!dataMatch || !dataMatch[1]) {
+            //     console.error(`[ERRO] Não encontrou o bloco 'export const data = {...};' no arquivo: ${filePath}`);
+            //     return null;
+            // }
+
+            // let dataStr = dataMatch[1];
 
             // let dataStr = content;
 
@@ -44,7 +91,11 @@ class MDXProcessor {
             try {
                 // Criar um contexto seguro para eval
                 // const data = eval(`(${dataStr})`);
-                const data = new Function(`return ${dataStr}`)();
+                //const data = new Function(`return ${dataStr}`)();
+                //const data = JSON5.parse(dataStr);
+                const data = JSON5.parse(dataStr);
+
+
                 return data;
                 // } catch (evalError) {
             } catch (parseError) {

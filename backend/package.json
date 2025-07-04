@@ -8,7 +8,13 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["ifpr", "horarios", "mdx", "mongodb", "nodejs"],
+  "keywords": [
+    "ifpr",
+    "horarios",
+    "mdx",
+    "mongodb",
+    "nodejs"
+  ],
   "author": "Manus AI",
   "license": "ISC",
   "dependencies": {
@@ -16,8 +22,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "fs-extra": "^11.2.0",
+    "json5": "^2.2.3",
     "mongodb": "^6.12.0",
     "path": "^0.12.7"
   }
 }
-
