@@ -25,6 +25,8 @@ class MDXProcessor {
         try {
             const content = fs.readFileSync(filePath, 'utf8');
 
+            console.log("Content: "+content);
+            
             // Procurar pela exportação const data com regex mais robusta
             //const dataMatch = content.match(/export const data = ({[\s\S]*?^});/m);
             const dataMatch = content.match(/export const data = (\{[\s\S]*?\});/);
@@ -35,6 +37,8 @@ class MDXProcessor {
             }
 
             let dataStr = dataMatch[1];
+
+            // let dataStr = content;
 
             // Usar eval de forma segura para parsear o objeto JavaScript
             try {
