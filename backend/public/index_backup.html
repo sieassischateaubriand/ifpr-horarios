@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFPR Horários - Processamento MDX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e1e5e9;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .status-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .status-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .status-value {
+            color: #666;
+        }
+
+        .errors {
+            background: #fee;
+            border: 1px solid #fcc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .errors h4 {
+            color: #c33;
+            margin-bottom: 10px;
+        }
+
+        .errors ul {
+            color: #c33;
+            padding-left: 20px;
+        }
+
+        .success {
+            background: #efe;
+            border: 1px solid #cfc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #3c3;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .api-info {
+            background: #f0f8ff;
+            border: 1px solid #b0d4f1;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .api-info h4 {
+            color: #2c5aa0;
+            margin-bottom: 10px;
+        }
+
+        .api-info p {
+            color: #2c5aa0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 IFPR Horários</h1>
+            <p>Processamento de Arquivos MDX com Node.js</p>
+        </div>
+
+        <div class="api-info">
+            <h4>ℹ️ Informações da API</h4>
+            <p><strong>Backend:</strong> Node.js + Express + MongoDB</p>
+            <p><strong>Funcionalidade:</strong> Leitura e processamento de arquivos MDX de horários de professores</p>
+        </div>
+
+        <form id="processForm">
+            <div class="form-group">
+                <label for="versao">Versão dos Horários:</label>
+                <select id="versao" name="versao" required>
+                    <optgroup label="2025.1">
+                        <option value="2025.1.8">2025.1.8 (Atual)</option>
+                        <option value="2025.1.7">2025.1.7</option>
+                        <option value="2025.1.6">2025.1.6</option>
+                        <option value="2025.1.5">2025.1.5</option>
+                        <option value="2025.1.4">2025.1.4</option>
+                        <option value="2025.1.3">2025.1.3</option>
+                        <option value="2025.1.2">2025.1.2</option>
+                        <option value="2025.1.1">2025.1.1</option>
+                    </optgroup>
+                    <optgroup label="2024.2">
+                        <!-- Versões do 2º Semestre de 2024 -->
+                        <option value="2024.2.7">2024.2.7</option>
+                        <option value="2024.2.6">2024.2.6</option>
+                        <option value="2024.2.5">2024.2.5</option>
+                        <option value="2024.2.4">2024.2.4</option>
+                        <option value="2024.2.3">2024.2.3</option>
+                        <option value="2024.2.2">2024.2.2</option>
+                        <option value="2024.2.1">2024.2.1</option>
+                        <!-- Versões do 1º Semestre de 2024 -->
+                    </optgroup>
+                    <optgroup label="2024.1">
+                        <option value="2024.1.11">2024.1.11</option>
+                        <option value="2024.1.10">2024.1.10</option>
+                        <option value="2024.1.9">2024.1.9</option>
+                        <option value="2024.1.8">2024.1.8</option>
+                        <option value="2024.1.7">2024.1.7</option>
+                        <option value="2024.1.6">2024.1.6</option>
+                        <option value="2024.1.5">2024.1.5</option>
+                        <option value="2024.1.4">2024.1.4</option>
+                        <option value="2024.1.3">2024.1.3</option>
+                        <option value="2024.1.2">2024.1.2</option>
+                        <option value="2024.1.1">2024.1.1</option>
+                    </optgroup>
+                    <optgroup label="2023.2">
+                        <!-- Versões do 2º Semestre de 2023 -->
+                        <option value="2023.2.7">2023.2.7</option>
+                        <option value="2023.2.6">2023.2.6</option>
+                        <option value="2023.2.5">2023.2.5</option>
+                        <option value="2023.2.4">2023.2.4</option>
+                        <option value="2023.2.3">2023.2.3</option>
+                        <option value="2023.2.2">2023.2.2</option>
+                        <option value="2023.2.1">2023.2.1</option>
+                        <!-- Versões do 1º Semestre de 2023 -->
+                    </optgroup>
+                    <optgroup label="2023.1">
+                        <option value="2023.1.8">2023.1.8</option>
+                        <option value="2023.1.7">2023.1.7</option>
+                        <option value="2023.1.6">2023.1.6</option>
+                        <option value="2023.1.5">2023.1.5</option>
+                        <option value="2023.1.4">2023.1.4</option>
+                        <option value="2023.1.3">2023.1.3</option>
+                        <option value="2023.1.2">2023.1.2</option>
+                        <option value="2023.1.1">2023.1.1</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <button type="submit" class="btn" id="processBtn">
+                Iniciar Processamento
+            </button>
+        </form>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="status-info">
+                <div class="status-row">
+                    <span class="status-label">Status:</span>
+                    <span class="status-value" id="statusText">Aguardando...</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Arquivo Atual:</span>
+                    <span class="status-value" id="currentFile">-</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Progresso:</span>
+                    <span class="status-value" id="progressText">0 / 0</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Tempo Decorrido:</span>
+                    <span class="status-value" id="elapsedTime">00:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="success" id="successMessage">
+            ✅ Processamento concluído com sucesso!
+        </div>
+
+        <div class="errors" id="errorsContainer">
+            <h4>⚠️ Erros Encontrados:</h4>
+            <ul id="errorsList"></ul>
+        </div>
+    </div>
+
+    <script>
+        let statusInterval;
+        let startTime;
+
+        document.getElementById('processForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const versao = document.getElementById('versao').value;
+            const processBtn = document.getElementById('processBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const successMessage = document.getElementById('successMessage');
+            const errorsContainer = document.getElementById('errorsContainer');
+
+            // Reset UI
+            progressContainer.style.display = 'block';
+            successMessage.style.display = 'none';
+            errorsContainer.style.display = 'none';
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<span class="spinner"></span>Processando...';
+
+            startTime = new Date();
+
+            try {
+                const response = await fetch('/api/processar-mdx', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ versao: versao })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Iniciar monitoramento do status
+                    statusInterval = setInterval(checkStatus, 1000);
+                } else {
+                    throw new Error(result.error || 'Erro desconhecido');
+                }
+
+            } catch (error) {
+                alert('Erro ao iniciar processamento: ' + error.message);
+                resetUI();
+            }
+        });
+
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/status-processamento');
+                const status = await response.json();
+
+                updateUI(status);
+
+                if (!status.is_processing) {
+                    clearInterval(statusInterval);
+                    resetUI();
+
+                    if (status.errors && status.errors.length > 0) {
+                        showErrors(status.errors);
+                    } else {
+                        document.getElementById('successMessage').style.display = 'block';
+                    }
+                }
+
+            } catch (error) {
+                console.error('Erro ao verificar status:', error);
+            }
+        }
+
+        function updateUI(status) {
+            const progressFill = document.getElementById('progressFill');
+            const statusText = document.getElementById('statusText');
+            const currentFile = document.getElementById('currentFile');
+            const progressText = document.getElementById('progressText');
+            const elapsedTime = document.getElementById('elapsedTime');
+
+            // Atualizar barra de progresso
+            const percentage = status.total_files > 0 ?
+                (status.processed_files / status.total_files) * 100 : 0;
+            progressFill.style.width = percentage + '%';
+
+            // Atualizar textos
+            statusText.textContent = status.is_processing ? 'Processando...' : 'Concluído';
+            currentFile.textContent = status.current_file || '-';
+            progressText.textContent = `${status.processed_files} / ${status.total_files}`;
+
+            // Calcular tempo decorrido
+            if (startTime) {
+                const elapsed = Math.floor((new Date() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                elapsedTime.textContent =
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        function showErrors(errors) {
+            const errorsContainer = document.getElementById('errorsContainer');
+            const errorsList = document.getElementById('errorsList');
+
+            errorsList.innerHTML = '';
+            errors.forEach(error => {
+                const li = document.createElement('li');
+                li.textContent = error;
+                errorsList.appendChild(li);
+            });
+
+            errorsContainer.style.display = 'block';
+        }
+
+        function resetUI() {
+            const processBtn = document.getElementById('processBtn');
+            processBtn.disabled = false;
+            processBtn.innerHTML = 'Iniciar Processamento';
+        }
+
+        // Testar conexão com a API ao carregar a página
+        window.addEventListener('load', async function () {
+            try {
+                const response = await fetch('/api/test');
+                const result = await response.json();
+                console.log('✅ Conexão com API estabelecida:', result);
+            } catch (error) {
+                console.error('❌ Erro ao conectar com API:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>
