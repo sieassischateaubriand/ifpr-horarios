@@ -1,20 +1,102 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
+
 require('dotenv').config();
+
+const connectDB = require('./src/config/database');
+const errorHandler = require('./src/middleware/errorHandler');
+
 
 const professorRoutes = require('./routes/professor');
 
+
+// Conectar ao banco de dados
+connectDB();
+
 const app = express();
+
+// Middleware de segurança
+app.use(helmet());
+
+// Middleware de compressão
+app.use(compression());
+
+// Middleware de CORS
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true
+}));
+
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutos
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // máximo 100 requests por IP
+  message: {
+    success: false,
+    message: 'Muitas tentativas. Tente novamente em alguns minutos.'
+  }
+});
+
+app.use('/api/', limiter);
+
+// Routes
+app.use('/api/professores', professorRoutes);
+// Rotas da API
+app.use('/api/auth', require('./src/routes/auth'));
+app.use('/api/users', require('./src/routes/users'));
+app.use('/api/courses', require('./src/routes/courses'));
+app.use('/api/student-groups', require('./src/routes/studentGroups'));
+app.use('/api/subjects', require('./src/routes/subjects'));
+app.use('/api/rooms', require('./src/routes/rooms'));
+
+// Middleware de logging
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+} else {
+  app.use(morgan('combined'));
+}
+
+// Middleware para parsing de JSON
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Rota de health check
+app.get('/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Sistema de Horários API está funcionando',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV
+  });
+});
+
+// Rotas da API
+app.use('/api/auth', require('./src/routes/auth'));
+
+// Rota 404
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Rota não encontrada'
+  });
+});
+
+// Middleware de tratamento de erros
+app.use(errorHandler);
+
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
-app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-app.use('/api', professorRoutes);
+
 
 // Serve frontend
 app.get('/', (req, res) => {
@@ -32,8 +114,24 @@ app.use((req, res) => {
     res.status(404).json({ error: 'Rota não encontrada' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Servidor rodando na porta ${PORT}`);
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Servidor rodando em modo ${process.env.NODE_ENV} na porta ${PORT}`);
     console.log(`📱 Acesse: http://localhost:${PORT}`);
 });
+
+
+// Tratamento de erros não capturados
+process.on('unhandledRejection', (err, promise) => {
+  console.log(`Erro não tratado: ${err.message}`);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+process.on('uncaughtException', (err) => {
+  console.log(`Exceção não capturada: ${err.message}`);
+  process.exit(1);
+});
+
+module.exports = app;
 
