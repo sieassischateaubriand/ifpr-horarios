@@ -59,6 +59,7 @@ const courseSchema = new mongoose.Schema({
   },
   tags: [{
     type: String,
+    enum: ['Semestral', 'Graduação', 'Anual', 'Pós-graduação'], // Opções para as checkboxes
     trim: true
   }],
   coordinator: {

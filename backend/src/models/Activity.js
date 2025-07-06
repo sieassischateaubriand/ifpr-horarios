@@ -13,7 +13,7 @@ const activitySchema = new mongoose.Schema({
   },
   teachers: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Teacher',
     required: true
   }],
   room: {

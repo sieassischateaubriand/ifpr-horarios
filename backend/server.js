@@ -12,8 +12,6 @@ const connectDB = require('./src/config/database');
 const errorHandler = require('./src/middleware/errorHandler');
 
 
-const professorRoutes = require('./routes/professor');
-
 
 // Conectar ao banco de dados
 connectDB();
@@ -45,15 +43,26 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
-// Routes
-app.use('/api/professores', professorRoutes);
+const professorRoutes = require('./src/routes/professorRoutes');
+const teacherRoutes = require('./src/routes/teacherRoutes'); // Nova linha
+const activityRoutes = require('./src/routes/activityRoutes'); // Nova linha
+const restrictionRoutes = require('./src/routes/restrictionRoutes'); // Nova linha
+const exportRoutes = require('./src/routes/exportRoutes'); // Nova linha
+
+
 // Rotas da API
 app.use('/api/auth', require('./src/routes/auth'));
-app.use('/api/users', require('./src/routes/users'));
-app.use('/api/courses', require('./src/routes/courses'));
-app.use('/api/student-groups', require('./src/routes/studentGroups'));
-app.use('/api/subjects', require('./src/routes/subjects'));
-app.use('/api/rooms', require('./src/routes/rooms'));
+app.use('/api/users', require('./src/routes/userRoutes'));
+app.use('/api/courses', require('./src/routes/courseRoutes'));
+app.use('/api/student-groups', require('./src/routes/studentGroupRoutes'));
+app.use('/api/subjects', require('./src/routes/subjectRoutes'));
+app.use('/api/rooms', require('./src/routes/roomRoutes'));
+app.use('/api/professores', professorRoutes);
+app.use('/api/teachers', teacherRoutes); // Nova linha
+app.use('/api/activities', activityRoutes); // Nova linha
+app.use('/api/restrictions', restrictionRoutes); // Nova linha
+app.use('/api/export', exportRoutes); // Nova linha
+
 
 // Middleware de logging
 if (process.env.NODE_ENV === 'development') {

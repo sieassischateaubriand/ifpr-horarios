@@ -289,12 +289,37 @@ const activitySchemas = {
   })
 };
 
+// Esquemas de validação para Salas (Rooms) - [CÓDIGO PARA ADICIONAR]
+const roomSchemas = {
+  create: Joi.object({
+    name: Joi.string().trim().min(2).max(100).required(),
+    capacity: Joi.number().min(1).required(),
+    building: Joi.string().trim().max(100).allow(''),
+    type: Joi.string().valid('Sala de Aula', 'Laboratório', 'Auditório', 'Gabinete').required(),
+    features: Joi.array().items(Joi.string().trim()),
+    notes: Joi.string().trim().max(500).allow('')
+  }),
+
+  update: Joi.object({
+    name: Joi.string().trim().min(2).max(100),
+    capacity: Joi.number().min(1),
+    building: Joi.string().trim().max(100).allow(''),
+    type: Joi.string().valid('Sala de Aula', 'Laboratório', 'Auditório', 'Gabinete'),
+    features: Joi.array().items(Joi.string().trim()),
+    notes: Joi.string().trim().max(500).allow(''),
+    status: Joi.string().valid('available', 'in_use', 'maintenance')
+  })
+};
+
+
 module.exports = {
   validate,
   userSchemas,
   courseSchemas,
   studentGroupSchemas,
   subjectSchemas,
-  activitySchemas
+  activitySchemas,
+  roomSchemas // << ADICIONE ESTA LINHA
+
 };
 

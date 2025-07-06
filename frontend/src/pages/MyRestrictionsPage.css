@@ -1,0 +1,42 @@
+.restrictions-grid-container {
+  overflow-x: auto; /* Para telas menores */
+}
+
+.restrictions-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  user-select: none; /* Impede a seleção de texto ao clicar */
+}
+
+.restrictions-table th, .restrictions-table td {
+  border: 1px solid #e8e8e8;
+  padding: 8px;
+  min-width: 120px;
+}
+
+.restrictions-table th {
+  background-color: #fafafa;
+}
+
+.restrictions-table .slot {
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-weight: bold;
+}
+
+/* Cores baseadas nos prints */
+.slot.livre {
+  background-color: #d9f7be; /* Verde claro */
+  color: #389e0d;
+}
+
+.slot.limitado {
+  background-color: #fffbe6; /* Amarelo claro */
+  color: #d48806;
+}
+
+.slot.bloqueado {
+  background-color: #fff1f0; /* Vermelho claro */
+  color: #cf1322;
+}
