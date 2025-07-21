@@ -20,7 +20,7 @@ sidebar_position: 1
 - [Eliana Pelicon Pereira Figueira](eliana_pelicon_pereira_figueira)
 - [Josiane Hammes](josiane_hammes)
 - [Karina Dias Espartosa](karina_dias_espartosa)
-- [Leandro Luiz Borges](leandro_luiz_borges)
+- [Leandro Luiz Borges](leandro_luiz_borges) .
 
 ## Educação Física
 - [Franciele Fernandes Baliero](franciele_fernandes_baliero)
