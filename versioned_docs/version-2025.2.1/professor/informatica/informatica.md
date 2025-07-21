@@ -1,8 +1,8 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
 ---
 
-# Quimica
+# Informática
 
 
 <!-- - [Laboratório de Biologia](laboratorio_de_biologia)

@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# GEOGRAFIA
+# Geografia
 
 
 <!-- - [Laboratório de Biologia](laboratorio_de_biologia)
