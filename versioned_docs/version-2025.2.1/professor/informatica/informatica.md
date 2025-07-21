@@ -5,11 +5,14 @@ sidebar_position: 1
 # Informática
 
 
-<!-- - [Laboratório de Biologia](laboratorio_de_biologia)
-- [Laboratório de Computação Aplicada](laboratorio_de_computacao_aplicada)
-- [Laboratório de Física](laboratorio_de_fisica)
-- [Laboratório de Informatica A](laboratorio_de_informatica_a)
-- [Laboratório de Informatica B](laboratorio_de_informatica_b)
-- [Laboratório de Química](laboratorio_de_quimica)
-- [Sala 3-1](sala_3-1)
-- [Sala 5](sala_5) -->
+## Professores
+
+- [Alexandre Rodrigues Monge](alexandre_rodrigues_monge)
+- [Alvaro Jose de Almeida Araujo](alvaro_jose_de_almeida_araujo)
+- [Douglas Barbosa Sousa](douglas_barbosa_sousa)
+- [Humberto Fioravante Ferro](humberto_fioravante_ferro)
+- [Olavo Jose Luiz Junior](olavo_jose_luiz_junior)
+- [Rafael Luis Bartz](rafael_luis_bartz)
+- [Samuel Stephan Milczuk](samuel_stephan_milczuk)
+- [Sergio Ricardo Ferrazoli](sergio_ricardo_ferrazoli)
+- [Vagner Simoes Santos](vagner_simoes_santos)

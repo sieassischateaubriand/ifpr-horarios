@@ -4,12 +4,10 @@ sidebar_position: 1
 
 # Matemática
 
+## Professores
 
-<!-- - [Laboratório de Biologia](laboratorio_de_biologia)
-- [Laboratório de Computação Aplicada](laboratorio_de_computacao_aplicada)
-- [Laboratório de Física](laboratorio_de_fisica)
-- [Laboratório de Informatica A](laboratorio_de_informatica_a)
-- [Laboratório de Informatica B](laboratorio_de_informatica_b)
-- [Laboratório de Química](laboratorio_de_quimica)
-- [Sala 3-1](sala_3-1)
-- [Sala 5](sala_5) -->
+- [Elenice Josefa Kolancko Setti](elenice_josefa_kolancko_setti)
+- [Elizangela Mendes Pereira](elizangela_mendes_pereira)
+- [Felipe Fraga de Oliveira](felipe_fraga_de_oliveira)
+- [Jonathan Prass Souza](jonathan_prass_souza)
+- [Mauro Cesar de Souza Siena](mauro_cesar_de_souza_siena)
